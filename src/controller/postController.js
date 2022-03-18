@@ -1,41 +1,40 @@
-const { Posts } = require("../db/postModel");
+const {
+  getData,
+  getDataById,
+  postData,
+  putData,
+  deleteData,
+} = require("../services/postsService");
 
-async function conGetData(req, res) {
-  const data = await Posts.find({});
+async function getDataController(req, res) {
+  const data = await getData();
   res.json({ data, status: "success" });
 }
 
-async function conGetDataById(req, res) {
-  const item = await Posts.findById(req.params.id);
-  res.json({ data: [item], status: "success" });
+async function getDataByIdController(req, res) {
+  const data = await getDataById(req.params.id);
+  res.json({ data: [data], status: "success" });
 }
-
-async function conPostData(req, res) {
-  await Posts.init();
-  try {
-    await Posts.create(req.body);
-  } catch (error) {
-    // See: https://masteringjs.io/tutorials/mongoose/e11000-duplicate-key
-    console.log(error);
-    return res.json({ status: error.code });
-  }
+// See: https://masteringjs.io/tutorials/mongoose/e11000-duplicate-key
+async function postDataController(req, res) {
+  await postData(req.body);
   res.json({ status: "success" });
 }
 
-async function conPutData(req, res) {
-  await Posts.findByIdAndUpdate(req.params.id, { $set: { ...req.body } });
+async function putDataController(req, res) {
+  await putData(req.params.id, req.body);
   res.json({ status: "success" });
 }
 
-async function conDeleteData(req, res) {
-  await Posts.findByIdAndRemove(req.params.id);
+async function deleteDataController(req, res) {
+  await deleteData(req.params.id);
   res.json({ status: "success" });
 }
 
 module.exports = {
-  conGetData,
-  conGetDataById,
-  conPostData,
-  conPutData,
-  conDeleteData,
+  getDataController,
+  getDataByIdController,
+  postDataController,
+  putDataController,
+  deleteDataController,
 };
